@@ -1,4 +1,3 @@
-
 from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
 from openai import OpenAI
@@ -45,6 +44,9 @@ Resume Content:
 {resume_text}
 
 Make the tone polished, confident, and personalized to the role.
+⚠️ Do NOT fabricate or include placeholder links (e.g., "linkedin.com/in/yourname" or "github.com/yourprofile").
+⚠️ Use only the contact information or URLs that exist in the resume.
+Never guess or inject personal details or filler content.
 """.strip()
 
 def create_pdf(content: str) -> str:
