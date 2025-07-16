@@ -9,7 +9,11 @@ import fitz  # PyMuPDF
 
 app = Flask(__name__)
 CORS(app)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), project=os.getenv("OPENAI_PROJECT_ID"))
+
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    project=os.getenv("OPENAI_PROJECT_ID")
+)
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
@@ -18,6 +22,17 @@ def extract_text_from_pdf(pdf_path):
         text += page.get_text()
     doc.close()
     return text.strip()
+
+def sanitize_text(text):
+    return (
+        text.replace("’", "'")
+            .replace("‘", "'")
+            .replace("“", '"')
+            .replace("”", '"')
+            .replace("—", "-")
+            .replace("–", "-")
+            .replace("…", "...")
+    )
 
 def generate_prompt(job_description: str, resume_text: str) -> str:
     return f"""
@@ -47,7 +62,6 @@ def generate_cover_letter():
     try:
         data = request.get_json()
         jd = data.get("job_description", "").strip()
-
         if not jd:
             return jsonify({"error": "Missing job_description"}), 400
 
@@ -55,13 +69,11 @@ def generate_cover_letter():
         resume_text = extract_text_from_pdf(resume_path)
 
         prompt = generate_prompt(jd, resume_text)
-        client = OpenAI()
-
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "user", "content": prompt}]
         )
-        letter = response.choices[0].message.content
+        letter = sanitize_text(response.choices[0].message.content)
         pdf_path = create_pdf(letter)
 
         return send_file(pdf_path, as_attachment=True, download_name="Hotambek_Yusupov_Cover_Letter.pdf")
