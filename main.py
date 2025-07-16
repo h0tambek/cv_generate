@@ -1,5 +1,6 @@
 
 from flask import Flask, request, send_file, jsonify
+from flask_cors import CORS
 import openai
 from fpdf import FPDF
 import tempfile
@@ -7,6 +8,7 @@ import os
 import fitz  # PyMuPDF
 
 app = Flask(__name__)
+CORS(app)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def extract_text_from_pdf(pdf_path):

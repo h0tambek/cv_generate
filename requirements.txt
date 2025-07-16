@@ -3,3 +3,4 @@ openai
 fpdf
 PyMuPDF
 gunicorn
+flask-cors
