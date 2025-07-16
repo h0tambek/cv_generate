@@ -55,7 +55,7 @@ def generate_cover_letter():
         resume_text = extract_text_from_pdf(resume_path)
 
         prompt = generate_prompt(jd, resume_text)
-        client = openai.OpenAI()
+        client = OpenAI()
 
         response = client.chat.completions.create(
             model="gpt-4",
