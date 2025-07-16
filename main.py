@@ -9,7 +9,7 @@ import fitz  # PyMuPDF
 
 app = Flask(__name__)
 CORS(app)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
