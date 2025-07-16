@@ -1,7 +1,7 @@
 
 from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
-import openai
+from openai import OpenAI
 from fpdf import FPDF
 import tempfile
 import os
@@ -55,12 +55,13 @@ def generate_cover_letter():
         resume_text = extract_text_from_pdf(resume_path)
 
         prompt = generate_prompt(jd, resume_text)
+        client = openai.OpenAI()
 
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}]
         )
-        letter = response['choices'][0]['message']['content']
+        letter = response.choices[0].message.content
         pdf_path = create_pdf(letter)
 
         return send_file(pdf_path, as_attachment=True, download_name="Hotambek_Yusupov_Cover_Letter.pdf")
